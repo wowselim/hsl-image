@@ -4,35 +4,15 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.function.BiConsumer;
 
 /**
  * An image that provides easy access for HSL related operations.
  */
 public class HSLImage implements Image {
-    private static final int PROCESSOR_COUNT = Runtime.getRuntime().availableProcessors();
-    private static BiConsumer<Pixel, float[]> processingTask = (pixel, hsl) -> {
-        float[] originalHsl = pixel.toOriginalHsl();
-        float[] workingHsl = pixel.toWorkingHsl();
-        workingHsl[0] = Math.max(0, Math.min(1, originalHsl[0] * hsl[0]));
-        workingHsl[1] = Math.max(0, Math.min(1, originalHsl[1] * hsl[1]));
-        workingHsl[2] = Math.max(0, Math.min(1, originalHsl[2] * hsl[2]));
-        pixel.fromHsl(workingHsl);
-    };
     private final int width;
     private final int height;
     private final Pixel[][] pixels;
     private final Map<Color, List<Pixel>> colorGroupedPixels = new EnumMap<>(Color.class);
-    private final ExecutorService executorService = Executors.newFixedThreadPool(PROCESSOR_COUNT, runnable -> {
-        Thread thread = new Thread(runnable);
-        thread.setName("ImageProcessingThread-" + UUID.randomUUID().toString());
-        thread.setDaemon(true);
-        return thread;
-    });
 
     public HSLImage(int width, int height) {
         this.width = width;
@@ -82,20 +62,13 @@ public class HSLImage implements Image {
     public void setHSL(Color color, float hue, float saturation, float lightness) {
         float[] hsl = new float[]{hue, saturation, lightness};
         List<Pixel> colorGroup = colorGroupedPixels.get(color);
-        int chunkSize = colorGroup.size() / PROCESSOR_COUNT;
-        List<Future> futures = new ArrayList<>(PROCESSOR_COUNT + 1);
-        for (int i = 0; i < colorGroup.size(); i += chunkSize) {
-            int end = Math.min(colorGroup.size(), i + chunkSize);
-            futures.add(executorService.submit(new PixelProcessor(processingTask,
-                    colorGroup.subList(i, end),
-                    hsl)));
-        }
-        for (Future future : futures) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                throw new RuntimeException("Error while processing image", e);
-            }
-        }
+        colorGroup.stream().parallel().forEach(pixel -> {
+            float[] originalHsl = pixel.toOriginalHsl();
+            float[] workingHsl = pixel.toWorkingHsl();
+            workingHsl[0] = Math.max(0, Math.min(1, originalHsl[0] * hsl[0]));
+            workingHsl[1] = Math.max(0, Math.min(1, originalHsl[1] * hsl[1]));
+            workingHsl[2] = Math.max(0, Math.min(1, originalHsl[2] * hsl[2]));
+            pixel.fromHsl(workingHsl);
+        });
     }
 }

@@ -3,10 +3,10 @@ package co.selim.hslimage;
 import java.util.HashSet;
 import java.util.Set;
 
-/*
+/**
  * Color and color space related utility class.
  */
-class ColorUtils {
+public class ColorUtils {
     private static int hueToDegrees(float hue) {
         if (hue < 0 || hue > 1) {
             throw new IllegalStateException("Hue out of bounds: " + hue);
@@ -65,7 +65,13 @@ class ColorUtils {
         return colors;
     }
 
-    private static int[] toRgbInts(int rgb) {
+    /**
+     * Converts a single RGB int into an array of its RGB components.
+     *
+     * @param rgb the int to convert
+     * @return an array of size 3 with the RGB components
+     */
+    public static int[] toRgbInts(int rgb) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;

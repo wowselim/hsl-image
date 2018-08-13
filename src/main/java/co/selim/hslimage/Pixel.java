@@ -9,11 +9,11 @@ class Pixel {
         this.workingColor = color;
     }
 
-    public void fromHsl(float[] hsl) {
+    void fromHsl(float[] hsl) {
         this.workingColor = ColorUtils.hslToRgb(hsl);
     }
 
-    public float[] toOriginalHsl() {
+    float[] toOriginalHsl() {
         return ColorUtils.rgbToHsl(color);
     }
 
@@ -21,7 +21,7 @@ class Pixel {
         return ColorUtils.rgbToHsl(workingColor);
     }
 
-    public int getRgb() {
+    int getRgb() {
         return workingColor;
     }
 }

@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'co.selim'
-version '0.9'
+version '1.0'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 

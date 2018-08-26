@@ -34,7 +34,7 @@ public class ColorUtils {
             colors.add(Color.ORANGE);
         }
 
-        if (degrees > 35 && degrees < 95) {
+        if (degrees > 35 && degrees < 70) {
             colors.add(Color.YELLOW);
         } else if (degrees > 25 && degrees < 105 && lightness > 0.5) {
             colors.add(Color.YELLOW);
@@ -55,7 +55,7 @@ public class ColorUtils {
         }
 
         if (degrees > 215 && degrees < 315) {
-            colors.add(Color.PINK);
+            colors.add(Color.PURPLE);
         }
 
         if (degrees > 295 && degrees < 345) {

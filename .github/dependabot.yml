@@ -1,0 +1,19 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: org.jetbrains.kotlin.jvm
+    versions:
+    - 1.4.21-2
+    - 1.4.30
+    - 1.4.31
+  - dependency-name: it.unimi.dsi:fastutil
+    versions:
+    - 8.4.4
+    - 8.5.1
+    - 8.5.2
